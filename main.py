@@ -4,22 +4,25 @@ import re
 
 client = discord.Client()
 
+
 @client.event
 async def on_ready():
+    # Sets up the bot for usage- prints username and sets currently playing
     print('Logged in as {0.user}'.format(client))
+    await client.change_presence(activity=discord.Game(name='!help'))
+
 
 @client.event
 async def on_message(message):
-    if message.author == client.user:
+    # Main controls for the bot
+    if message.author == client.user:  # Don't respond to ourselves
         return
 
-    if message.content.startswith('!help'):
-        author = str(message.author)
-        author = re.findall(r'.*(?=#)', author)[0]
-        if isEvent() == "false":
-            await message.channel.send(author + '- Use !event to see current event, !left to see current time left, and !next for the next event.')
+    if message.content.startswith('!help'):  # Help menu
+        await message.channel.send(
+            'Help\n-------------\n`!event` Current event\n`!left` Time left in current event\n`!next` Upcoming events')
 
-    if message.content.startswith('!event'):
+    if message.content.startswith('!event'):  # Returns current event
         author = str(message.author)
         author = re.findall(r'.*(?=#)', author)[0]
         if isEvent() == "false":
@@ -27,16 +30,19 @@ async def on_message(message):
         else:
             await message.channel.send(author + '- The current event is: ' + isEvent())
 
-    if message.content.startswith('!left'):
+    if message.content.startswith('!left'):  # Returns time left in current event
         author = str(message.author)
         author = re.findall(r'.*(?=#)', author)[0]
         if leftInEvent() == "false":
             await message.channel.send(author + '- There is no current event.')
         else:
             await message.channel.send(author + '- There is ' + leftInEvent() + ' left.')
-    if message.content.startswith('!next'):
+
+    if message.content.startswith('!next'):  # Returns future events
         author = str(message.author)
         author = re.findall(r'.*(?=#)', author)[0]
         await message.channel.send(author + '-\n' + nextEvent())
 
+
+# login and start bot
 client.run('token')
