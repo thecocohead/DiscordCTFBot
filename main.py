@@ -1,6 +1,7 @@
 import discord
 from DiscordCTFlib import *
 import re
+import sys
 
 client = discord.Client()
 
@@ -44,5 +45,10 @@ async def on_message(message):
         await message.channel.send(author + '-\n' + nextEvent())
 
 
+# test if discord token is in script
+if len(sys.argv) == 1:
+    print('Run script with your discord bot token!')
+    sys.exit()
+
 # login and start bot
-client.run('token')
+client.run(str(sys.argv[1]))
