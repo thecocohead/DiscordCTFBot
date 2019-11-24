@@ -4,8 +4,8 @@ import sys
 from DiscordCTFlib import *
 
 main_channel = 468589088132431894
-delay = 30
-debug = False
+delay = 5
+debug = True
 client = discord.Client()
 
 
@@ -17,18 +17,18 @@ async def on_ready():
     # upon event start, print start message
     if debug:
         print("start")
-    if timeSinceStart()<delay*2:
-        await channel.send(":triangular_flag_on_post: It's CTF Time @players! Event has started: " + isEvent())
+    if startEnd()[0]<delay*2:
+        await channel.send(":triangular_flag_on_post: It's CTF Time @everyone! Event has started: " + isEvent())
     elif debug:
         print("not printed due to delay")
-    time.sleep(timeToNextPing())  # sleep till event end
+    print(startEnd()[1])
+    time.sleep(startEnd()[1])  # sleep till event end
     # Print ending message
     if debug:
         print("end")
-    await channel.send(":triangular_flag_on_post: We are done @players! Event has ended: " + isEvent())
+    await channel.send(":triangular_flag_on_post: We are done @everyone! Event has ended: " + isEvent())
     time.sleep(delay*2)
     sys.exit()
-
 
 # test if discord token is in script
 if len(sys.argv) == 1:
@@ -38,7 +38,7 @@ if len(sys.argv) == 1:
 # Check every x seconds for an event
 while True:
     if isEvent() != "false":
-        client.run('token')
+        client.run(str(sys.argv[1]))
     else:
         time.sleep(delay)
         if debug:

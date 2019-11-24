@@ -1,8 +1,10 @@
 import datetime
 import urllib.request
 import re
+import math
 
 url = 'https://calendar.google.com/calendar/ical/e2haqqg2h2m15n1trn1pusavqk%40group.calendar.google.com/public/basic.ics'
+
 
 def calendar():
     response = urllib.request.urlopen(url)
@@ -11,7 +13,8 @@ def calendar():
     start = re.findall(r'(?<=DTSTART:).*', text)
     end = re.findall(r'(?<=DTEND:).*', text)
     summary = re.findall(r'(?<=SUMMARY:).*', text)
-    return [start,end,summary]
+    return [start, end, summary]
+
 
 def isEvent():
     now = datetime.datetime.utcnow()
@@ -27,6 +30,7 @@ def isEvent():
         i += 1
     return "false"
 
+
 def leftInEvent():
     now = datetime.datetime.utcnow()
     start = calendar()[0]
@@ -41,27 +45,9 @@ def leftInEvent():
         i += 1
     return "false"
 
-def timeToNextPing():
-    now = datetime.datetime.utcnow()
-    text = calendar()
-    start = calendar()[0]
-    end = calendar()[1]
-    date = now.strftime("%Y%m%dT%H%M%SZ\r")
-    length = len(start)
-    i = 0
-    while i < length:
-        if start[i] < date < end[i]:
-            end1 = datetime.datetime.strptime(end[i], '%Y%m%dT%H%M%SZ\r')
-            timeDt = end1 - now
-            return timeDt.total_seconds()
-        i += 1
-    return "false"
-
 def nextEvent():
     now = datetime.datetime.utcnow()
-    text = calendar()
     start = calendar()[0]
-    start = calendar()[3]
     length = len(start)
     i = 0
     output = ""
@@ -71,24 +57,26 @@ def nextEvent():
         timeDt1 = round(timeDt.total_seconds())
         timeDt = re.findall(r'.*(?=\.)', str(timeDt))[0]
         if timeDt1 > 0:
-            sum1 = str(summary[i])
+            sum1 = str(calendar()[2][i])
             sum1 = sum1.replace('\r', '')
             output += sum1 + ' starts in ' + str(timeDt) + '\n'
 
         i += 1
     return output
 
-def timeSinceStart():
-    now = datetime.datetime.utcnow()
+def startEnd():
     start = calendar()[0]
     end = calendar()[1]
-    date = now.strftime("%Y%m%dT%H%M%SZ\r")
     length = len(start)
     i = 0
+    now = datetime.datetime.utcnow()
+    date = now.strftime("%Y%m%dT%H%M%SZ\r")
     while i < length:
         if start[i] < date < end[i]:
             start1 = datetime.datetime.strptime(start[i], '%Y%m%dT%H%M%SZ\r')
-            timeDt = now - start1
-            return timeDt.total_seconds()
+            end1 = datetime.datetime.strptime(end[i], '%Y%m%dT%H%M%SZ\r')
+            timeDt0 = now - start1
+            timeDt1 = end1 - now
+            return [math.floor(timeDt0.total_seconds()), math.floor(timeDt1.total_seconds())] #0 is time since start, 1 is time until end
         i += 1
     return -1

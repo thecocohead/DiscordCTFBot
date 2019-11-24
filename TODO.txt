@@ -1,5 +1,0 @@
-DiscordCTFlib.py nextEvent:
-order output corretly
-
-General:
-Cache the reply from gcal in DiscordCTFlib

@@ -34,10 +34,10 @@ async def on_message(message):
     if message.content.startswith('!left'):  # Returns time left in current event
         author = str(message.author)
         author = re.findall(r'.*(?=#)', author)[0]
-        if leftInEvent() == "false":
+        if startEnd() == -1:
             await message.channel.send(author + '- There is no current event.')
         else:
-            await message.channel.send(author + '- There is ' + leftInEvent() + ' left.')
+            await message.channel.send(author + '- There is ' + str(datetime.timedelta(seconds=startEnd()[1])) + ' left.')
 
     if message.content.startswith('!next'):  # Returns future events
         author = str(message.author)
