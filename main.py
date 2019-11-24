@@ -1,5 +1,5 @@
 import discord
-from DiscordCTFlib import *
+from CalLib import *
 import re
 import sys
 
@@ -26,7 +26,7 @@ async def on_message(message):
     if message.content.startswith('!event'):  # Returns current event
         author = str(message.author)
         author = re.findall(r'.*(?=#)', author)[0]
-        if isEvent() == "false":
+        if not(isEvent()):
             await message.channel.send(author + '- There is no current event.')
         else:
             await message.channel.send(author + '- The current event is: ' + isEvent())
@@ -42,7 +42,10 @@ async def on_message(message):
     if message.content.startswith('!next'):  # Returns future events
         author = str(message.author)
         author = re.findall(r'.*(?=#)', author)[0]
-        await message.channel.send(author + '-\n' + nextEvent())
+        if nextEvent()=="":
+            await message.channel.send(author + '- There is no scheduled events.')
+        else:
+            await message.channel.send(author + '-\n' + nextEvent())
 
 
 # test if discord token is in script

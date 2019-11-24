@@ -1,11 +1,14 @@
+#!/usr/bin/env python3
+
 import discord
 import time
 import sys
-from DiscordCTFlib import *
+import os
+from CalLib import *
 
-main_channel = 468589088132431894
-delay = 5
-debug = True
+main_channel = 646239853893124097 # Your CTF team's announcement channel
+delay = 30 # Time between checking for a new event
+debug = False # If true, prints debug statements.
 client = discord.Client()
 
 
@@ -21,14 +24,13 @@ async def on_ready():
         await channel.send(":triangular_flag_on_post: It's CTF Time @everyone! Event has started: " + isEvent())
     elif debug:
         print("not printed due to delay")
-    print(startEnd()[1])
     time.sleep(startEnd()[1])  # sleep till event end
     # Print ending message
     if debug:
         print("end")
     await channel.send(":triangular_flag_on_post: We are done @everyone! Event has ended: " + isEvent())
     time.sleep(delay*2)
-    sys.exit()
+    os.execl('notify.py', 'notify.py', sys.argv[1])
 
 # test if discord token is in script
 if len(sys.argv) == 1:
@@ -37,7 +39,7 @@ if len(sys.argv) == 1:
 
 # Check every x seconds for an event
 while True:
-    if isEvent() != "false":
+    if isEvent() != False:
         client.run(str(sys.argv[1]))
     else:
         time.sleep(delay)
